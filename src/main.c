@@ -1,4 +1,3 @@
-#include "bits.h"
 #include "maze.h"
 #include "other.h"
 #include "player.h"

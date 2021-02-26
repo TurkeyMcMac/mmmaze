@@ -1,7 +1,8 @@
-#ifndef BITS_H_
-#define BITS_H_
+#ifndef TILE_H_
+#define TILE_H_
 
 /* TILE_TYPE currently holds eight bits. */
+typedef unsigned char TILE_TYPE;
 
 /* These bits identify which ways can be taken out of the tile. */
 #define BIT_RIGHT 0x01
@@ -25,4 +26,4 @@
 /* This bit shows that there's cash in the tile. */
 #define BIT_CASH 0x40
 
-#endif /* BITS_H_ */
+#endif /* TILE_H_ */

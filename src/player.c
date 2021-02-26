@@ -1,7 +1,7 @@
 #include "player.h"
-#include "bits.h"
 #include "grow.h"
 #include "maze.h"
+#include "tile.h"
 #include <stdlib.h>
 
 struct heads {

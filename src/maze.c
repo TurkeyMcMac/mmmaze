@@ -1,5 +1,4 @@
 #include "maze.h"
-#include "bits.h"
 #include "grow.h"
 #include <stdlib.h>
 

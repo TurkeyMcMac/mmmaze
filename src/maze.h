@@ -2,8 +2,7 @@
 #define MAZE_H_
 
 #include "rand.h"
-
-typedef unsigned char TILE_TYPE;
+#include "tile.h"
 
 struct maze {
 	int width, height;

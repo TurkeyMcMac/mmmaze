@@ -1,5 +1,5 @@
 #include "other.h"
-#include "bits.h"
+#include "tile.h"
 #include <stddef.h>
 
 void other_move_random(struct other *other, const struct maze *maze,
