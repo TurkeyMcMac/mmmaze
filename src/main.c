@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define VIEW_DIST 5
+#define VIEW_DIST 11
 
 static chtype get_path_char(TILE_TYPE tile)
 {
@@ -37,65 +37,53 @@ static chtype get_path_char(TILE_TYPE tile)
 int main(void)
 {
 	int px = 0, py = 0;
-	struct other other = { 1, 1, BIT_LEFT };
+	struct other other = { 0, 0, BIT_LEFT };
+	int ox, oy;
 	int key;
 	struct maze maze;
 	RAND_TYPE rand = time(NULL);
 
 	initscr();
 	noecho();
+	curs_set(0);
 
 	maze_generate(&maze, 30, 30, &rand);
+
+	maze_random_node(&maze, &ox, &oy, &rand);
+	other.x = ox;
+	other.y = oy;
 
 	do {
 		int x, y;
 		TILE_TYPE t;
-		erase();
 		player_mark_seen(&maze, px, py, VIEW_DIST);
 		for (y = -VIEW_DIST; y <= VIEW_DIST; ++y) {
 			for (x = -VIEW_DIST; x <= VIEW_DIST; ++x) {
+				chtype ch = ' ';
 				int mx = x + px, my = y + py;
 				if (mx >= 0 && my >= 0
 				 && mx < maze.width && my < maze.height) {
-					int sx = (x + VIEW_DIST) * 2,
-					    sy = (y + VIEW_DIST) * 2;
 					t = MAZE_GET(&maze, mx, my);
 					if (t & BIT_PLAYER_SEEN) {
-						if ((t & BIT_RIGHT)
-						 && (MAZE_GET(&maze, mx + 1, my)
-							& BIT_PLAYER_SEEN))
-							mvaddch(sy,
-								sx + 1,
-								ACS_HLINE);	
-						if ((t & BIT_DOWN)
-						 && (MAZE_GET(&maze, mx, my + 1)
-							& BIT_PLAYER_SEEN))
-							mvaddch(sy + 1,
-								sx,
-								ACS_VLINE);
-						if (mx == 0 && my == 0) {
-							mvaddch(sy, sx, 'S');
+						if (x == 0 && y == 0) {
+							ch = '@';
+						} else if (mx == 0 && my == 0) {
+							ch = 'S';
 						} else if (mx == maze.width - 1
 						 && my == maze.height - 1) {
-							mvaddch(sy, sx,
-								A_STANDOUT
-									| 'E');
+							ch = A_STANDOUT | 'E';
 						} else if (mx == other.x
-						 && my == other.y)
-						{
-							mvaddch(sy, sx, 'O');
+						 && my == other.y) {
+							ch = 'O';
 						} else {
-							mvaddch(sy, sx,
-								get_path_char(
-									t));
+							ch = get_path_char(t);
 						}
 					}
 				}
+				mvaddch(y + VIEW_DIST, x + VIEW_DIST, ch);
 			}
 		}
 		player_unmark_seen(&maze, px, py, VIEW_DIST);
-		mvaddch(VIEW_DIST * 2, VIEW_DIST * 2, '@');
-		move(VIEW_DIST * 2, VIEW_DIST * 2);
 		refresh();
 		key = getch();
 		t = MAZE_GET(&maze, px, py);

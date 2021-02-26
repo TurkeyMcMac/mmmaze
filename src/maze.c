@@ -22,13 +22,13 @@ static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (coords_are_ok(maze, x, y)) {
 		TILE_TYPE *t = &MAZE_GET(maze, x, y);
-		if ((*t & BIT_CHECKED) == 0) {
+		if ((*t & BIT_ADDED) == 0) {
 			struct head *h =
 				GROW(heads->arr, heads->len, heads->cap);
 			if (!h) return -1;
 			h->x = x;
 			h->y = y;
-			*t |= BIT_CHECKED;
+			*t |= BIT_ADDED;
 		}
 	}
 	return 0;
@@ -36,18 +36,18 @@ static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 
 static int add_heads(const struct maze *maze, int x, int y, struct heads *heads)
 {
-	if (add_head(maze, x + 1, y, heads)
-	 || add_head(maze, x, y - 1, heads)
-	 || add_head(maze, x - 1, y, heads)
-	 || add_head(maze, x, y + 1, heads))
+	if (add_head(maze, x + 2, y, heads)
+	 || add_head(maze, x, y - 2, heads)
+	 || add_head(maze, x - 2, y, heads)
+	 || add_head(maze, x, y + 2, heads))
 		return -1;
 	return 0;
 }
 
-static void rand_point(const struct maze *maze, RAND_TYPE *rand, int *x, int *y)
+void maze_random_node(const struct maze *maze, int *x, int *y, RAND_TYPE *rand)
 {
-	*x = (unsigned)rand_gen(rand) % maze->width;
-	*y = (unsigned)rand_gen(rand) % maze->height;
+	*x = (unsigned)rand_gen(rand) % ((maze->width + 1) / 2) * 2;
+	*y = (unsigned)rand_gen(rand) % ((maze->height + 1) / 2) * 2;
 }
 
 void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
@@ -56,10 +56,10 @@ void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
 		int dx, dy;
 		TILE_TYPE here_mask, there_mask;
 	} dirs[4] = {
-		{ +1,  0, BIT_RIGHT, BIT_LEFT  },
-		{  0, -1, BIT_UP   , BIT_DOWN  },
-		{ -1,  0, BIT_LEFT , BIT_RIGHT },
-		{  0, +1, BIT_DOWN , BIT_UP    }
+		{ +2,  0, BIT_RIGHT, BIT_LEFT  },
+		{  0, -2, BIT_UP   , BIT_DOWN  },
+		{ -2,  0, BIT_LEFT , BIT_RIGHT },
+		{  0, +2, BIT_DOWN , BIT_UP    }
 	};
 
 	TILE_TYPE *here = &MAZE_GET(maze, x, y);
@@ -92,21 +92,48 @@ void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
 	*here |= BIT_PATH;
 }
 
-int maze_generate(struct maze *maze, int width, int height, RAND_TYPE *rand)
+static void remove_intermediate_bits(struct maze *maze)
+{
+	int x, y;
+	for (y = 0; y < maze->height; y += 2) {
+		for (x = 0; x < maze->width; x += 2) {
+			MAZE_GET(maze, x, y) &= ~(BIT_ADDED | BIT_PATH);
+		}
+	}
+}
+
+static void connect_paths(struct maze *maze)
+{
+	int x, y;
+	for (y = 0; y < maze->height; y += 2) {
+		for (x = 0; x < maze->width; x += 2) {
+			TILE_TYPE t = MAZE_GET(maze, x, y);
+			if (t & BIT_RIGHT)
+				MAZE_GET(maze, x + 1, y) = BIT_LEFT | BIT_RIGHT;
+			if (t & BIT_DOWN)
+				MAZE_GET(maze, x, y + 1) = BIT_UP | BIT_DOWN;
+		}
+	}
+}
+
+int maze_generate(struct maze *maze, int width_nodes, int height_nodes,
+	RAND_TYPE *rand)
 {
 	struct heads heads = { NULL, 0, 0 };
 	int x, y;
 
-	if (width <= 0 || height <= 0
-	 || width > MAZE_MAX_WIDTH || height > MAZE_MAX_HEIGHT)
+	if (width_nodes <= 0 || height_nodes <= 0
+	 || width_nodes > MAZE_WIDTH_NODES_MAX
+	 || height_nodes > MAZE_HEIGHT_NODES_MAX)
 		goto error_dims;
 
-	maze->width = width;
-	maze->height = height;
-	maze->tiles = calloc((size_t)(width * height), sizeof(*maze->tiles));
+	maze->width = width_nodes * 2 - 1;
+	maze->height = height_nodes * 2 - 1;
+	maze->tiles = calloc((size_t)(maze->width * maze->height),
+		sizeof(*maze->tiles));
 	if (!maze->tiles) goto error_maze_alloc;
 
-	rand_point(maze, rand, &x, &y);
+	maze_random_node(maze, &x, &y, rand);
 	add_path(maze, x, y, rand);
 	if (add_heads(maze, x, y, &heads)) goto error_heads;
 
@@ -118,8 +145,12 @@ int maze_generate(struct maze *maze, int width, int height, RAND_TYPE *rand)
 			goto error_heads;
 		*h = heads.arr[--heads.len];
 	}
-
 	free(heads.arr);
+
+	remove_intermediate_bits(maze);
+
+	connect_paths(maze);
+
 	return 0;
 
 error_heads:
