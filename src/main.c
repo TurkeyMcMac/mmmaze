@@ -8,29 +8,34 @@
 
 #define VIEW_DIST 11
 
-static chtype get_path_char(TILE_TYPE tile)
+static chtype get_tile_char(TILE_TYPE tile)
 {
-	int r = tile & BIT_RIGHT;
-	int u = tile & BIT_UP;
-	int l = tile & BIT_LEFT;
-	int d = tile & BIT_DOWN;
-	chtype ch = ACS_BULLET; /* No connections. */
-	if (!r && !u && !l &&  d) ch = ACS_VLINE;
-	if (!r && !u &&  l && !d) ch = ACS_HLINE;
-	if (!r && !u &&  l &&  d) ch = ACS_URCORNER;
-	if (!r &&  u && !l && !d) ch = ACS_VLINE;
-	if (!r &&  u && !l &&  d) ch = ACS_VLINE;
-	if (!r &&  u &&  l && !d) ch = ACS_LRCORNER;
-	if (!r &&  u &&  l &&  d) ch = ACS_RTEE;
-	if ( r && !u && !l && !d) ch = ACS_HLINE;
-	if ( r && !u && !l &&  d) ch = ACS_ULCORNER;
-	if ( r && !u &&  l && !d) ch = ACS_HLINE;
-	if ( r && !u &&  l &&  d) ch = ACS_TTEE;
-	if ( r &&  u && !l && !d) ch = ACS_LLCORNER;
-	if ( r &&  u && !l &&  d) ch = ACS_LTEE;
-	if ( r &&  u &&  l && !d) ch = ACS_BTEE;
-	if ( r &&  u &&  l &&  d) ch = ACS_PLUS;
-	return ch;
+	if (tile & BIT_OBSTRUCTED) {
+		return 'O';
+	} else if (tile & BIT_CASH) {
+		return '$';
+	} else {
+		int r = tile & BIT_RIGHT;
+		int u = tile & BIT_UP;
+		int l = tile & BIT_LEFT;
+		int d = tile & BIT_DOWN;
+		if (!r && !u && !l &&  d) return ACS_VLINE;
+		if (!r && !u &&  l && !d) return ACS_HLINE;
+		if (!r && !u &&  l &&  d) return ACS_URCORNER;
+		if (!r &&  u && !l && !d) return ACS_VLINE;
+		if (!r &&  u && !l &&  d) return ACS_VLINE;
+		if (!r &&  u &&  l && !d) return ACS_LRCORNER;
+		if (!r &&  u &&  l &&  d) return ACS_RTEE;
+		if ( r && !u && !l && !d) return ACS_HLINE;
+		if ( r && !u && !l &&  d) return ACS_ULCORNER;
+		if ( r && !u &&  l && !d) return ACS_HLINE;
+		if ( r && !u &&  l &&  d) return ACS_TTEE;
+		if ( r &&  u && !l && !d) return ACS_LLCORNER;
+		if ( r &&  u && !l &&  d) return ACS_LTEE;
+		if ( r &&  u &&  l && !d) return ACS_BTEE;
+		if ( r &&  u &&  l &&  d) return ACS_PLUS;
+	}
+	return ' ';
 }
 
 int main(void)
@@ -49,12 +54,23 @@ int main(void)
 	maze_generate(&maze, 30, 30, &rand);
 
 	maze_random_node(&maze, &ox, &oy, &rand);
+	MAZE_GET(&maze, ox, oy) |= BIT_CASH;
+	maze_random_node(&maze, &ox, &oy, &rand);
+	MAZE_GET(&maze, ox, oy) |= BIT_CASH;
+	maze_random_node(&maze, &ox, &oy, &rand);
+	MAZE_GET(&maze, ox, oy) |= BIT_CASH;
+	maze_random_node(&maze, &ox, &oy, &rand);
+	MAZE_GET(&maze, ox, oy) |= BIT_CASH;
+	maze_random_node(&maze, &ox, &oy, &rand);
+	MAZE_GET(&maze, ox, oy) |= BIT_CASH;
+	maze_random_node(&maze, &ox, &oy, &rand);
 	other.x = ox;
 	other.y = oy;
 
 	do {
 		int x, y;
 		TILE_TYPE t;
+		MAZE_GET(&maze, other.x, other.y) |= BIT_OBSTRUCTED;
 		player_mark_seen(&maze, px, py, VIEW_DIST);
 		for (y = -VIEW_DIST; y <= VIEW_DIST; ++y) {
 			for (x = -VIEW_DIST; x <= VIEW_DIST; ++x) {
@@ -71,11 +87,8 @@ int main(void)
 						} else if (mx == maze.width - 1
 						 && my == maze.height - 1) {
 							ch = A_STANDOUT | 'E';
-						} else if (mx == other.x
-						 && my == other.y) {
-							ch = 'O';
 						} else {
-							ch = get_path_char(t);
+							ch = get_tile_char(t);
 						}
 					}
 				}
@@ -100,6 +113,7 @@ int main(void)
 			if (t & BIT_RIGHT) ++px;
 			break;
 		}
+		MAZE_GET(&maze, other.x, other.y) &= ~BIT_OBSTRUCTED;
 		other_move_random(&other, &maze, &rand);
 	} while (key != 'q');
 
