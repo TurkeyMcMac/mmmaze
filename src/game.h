@@ -1,0 +1,55 @@
+#ifndef GAME_H_
+#define GAME_H_
+
+#include "maze.h"
+
+#define GAME_WIDTH_DEFAULT 30
+#define GAME_WIDTH_MIN 1
+#define GAME_WIDTH_MAX MAZE_WIDTH_NODES_MAX
+
+#define GAME_HEIGHT_DEFAULT 30
+#define GAME_HEIGHT_MIN 1
+#define GAME_HEIGHT_MAX MAZE_HEIGHT_NODES_MAX
+
+#define GAME_VIEW_DIST_DEFAULT 11
+#define GAME_VIEW_DIST_MIN 1
+#define GAME_VIEW_DIST_MAX 1000
+
+#define GAME_CASH_INTERVAL_DEFAULT 10
+#define GAME_CASH_INTERVAL_MIN 1
+#define GAME_CASH_INTERVAL_MAX 1000
+
+#define GAME_MAX_CASH_DEFAULT 20
+#define GAME_MAX_CASH_MIN 0
+#define GAME_MAX_CASH_MAX (GAME_WIDTH_MAX * GAME_HEIGHT_MAX)
+
+#define GAME_MONSTER_INTERVAL_DEFAULT 30
+#define GAME_MONSTER_INTERVAL_MIN 1
+#define GAME_MONSTER_INTERVAL_MAX 1000
+
+#define GAME_SEED_DEFAULT 0
+#define GAME_SEED_MIN 0
+#define GAME_SEED_MAX MAX_RAND
+
+struct game_params {
+	int width;
+	int height;
+	int view_dist;
+	int cash_interval;
+	int max_cash;
+	int monster_interval;
+	RAND_TYPE seed;
+};
+
+#define GAME_DEFAULT_INITIALIZER { \
+	GAME_WIDTH_DEFAULT, \
+	GAME_HEIGHT_DEFAULT, \
+	GAME_VIEW_DIST_DEFAULT, \
+	GAME_CASH_INTERVAL_DEFAULT, \
+	GAME_MAX_CASH_DEFAULT, \
+	GAME_MONSTER_INTERVAL_DEFAULT, \
+	GAME_SEED_DEFAULT }
+
+void game_run(const struct game_params *params);
+
+#endif /* GAME_H_ */
