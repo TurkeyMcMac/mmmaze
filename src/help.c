@@ -49,9 +49,10 @@ void help_overview_run(void)
 void help_controls_run(void)
 {
 	static const char controls[] =
-		"You can move with WASD. Pressing E makes you idle for one\n"
-		"game tick. You can quit an ongoing game with Q. H is also\n"
-		"available in-game to bring up this help. That's about it.";
+		"You can move with the arrow keys, WASD, or HJKL. Pressing\n"
+		"E makes you idle for one game tick. You can quit an\n"
+		"ongoing game with Q. H is also available in-game to bring\n"
+		"up this help. That's about it.";
 	mvprintw(0, 0, "Controls\n\n%s\n\n(q) Back", controls);
 	clrtobot();
 

@@ -138,7 +138,19 @@ void game_run(const struct game_params *params)
 		}
 
 		switch (getch()) {
+		case KEY_RIGHT:
+		case 'd':
+		case 'l':
+			if (player_avail & BIT_RIGHT) {
+				player_unmark_seen(&maze, player_x, player_y,
+					params->view_dist);
+				++player_x;
+				do_tick = 1;
+			}
+			break;
+		case KEY_UP:
 		case 'w':
+		case 'k':
 			if (player_avail & BIT_UP) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -146,7 +158,9 @@ void game_run(const struct game_params *params)
 				do_tick = 1;
 			}
 			break;
+		case KEY_LEFT:
 		case 'a':
+		case 'h':
 			if (player_avail & BIT_LEFT) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -154,19 +168,13 @@ void game_run(const struct game_params *params)
 				--player_x;
 			}
 			break;
+		case KEY_DOWN:
 		case 's':
+		case 'j':
 			if (player_avail & BIT_DOWN) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
 				++player_y;
-				do_tick = 1;
-			}
-			break;
-		case 'd':
-			if (player_avail & BIT_RIGHT) {
-				player_unmark_seen(&maze, player_x, player_y,
-					params->view_dist);
-				++player_x;
 				do_tick = 1;
 			}
 			break;

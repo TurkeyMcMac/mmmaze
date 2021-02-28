@@ -31,6 +31,7 @@ void ui_run(void)
 	initscr();
 	noecho();
 	curs_set(0);
+	keypad(stdscr, TRUE);
 
 	run_main_menu();
 
