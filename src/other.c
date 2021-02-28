@@ -1,44 +1,72 @@
 #include "other.h"
-#include "tile.h"
+#include "move.h"
 #include <stddef.h>
 
-void other_move_random(struct other *other, const struct maze *maze,
+void other_init(struct other *other, int x, int y, struct maze *maze)
+{
+	other->x = x;
+	other->y = y;
+	other->back_dir = 0;
+	other->next_move = 0;
+	MAZE_GET(maze, x, y) |= BIT_OBSTRUCTED;
+}
+
+void other_start_move_random(struct other *other, const struct maze *maze,
 	RAND_TYPE *rand)
 {
-	TILE_TYPE move;
-	TILE_TYPE avail = MAZE_GET(maze, other->x, other->y)
-		& (BIT_RIGHT | BIT_UP | BIT_LEFT | BIT_DOWN)
+	size_t n_avail = 0;
+	TILE_TYPE avail[4];
+	TILE_TYPE avail_bits = move_get_available(maze, other->x, other->y)
 		& ~other->back_dir;
-	if (avail == 0) {
-		move = other->back_dir;
-	} else if (avail == BIT_RIGHT || avail == BIT_UP
-	 || avail == BIT_LEFT || avail == BIT_DOWN) {
-		move = avail;
+	if (avail_bits & BIT_RIGHT) avail[n_avail++] = BIT_RIGHT;
+	if (avail_bits & BIT_UP) avail[n_avail++] = BIT_UP;
+	if (avail_bits & BIT_LEFT) avail[n_avail++] = BIT_LEFT;
+	if (avail_bits & BIT_DOWN) avail[n_avail++] = BIT_DOWN;
+
+	if (n_avail > 0) {
+		other->next_move = avail[rand_gen(rand) % n_avail];
 	} else {
-		size_t n_avail = 0;
-		TILE_TYPE avail_arr[4];
-		if (avail & BIT_RIGHT) avail_arr[n_avail++] = BIT_RIGHT;
-		if (avail & BIT_UP) avail_arr[n_avail++] = BIT_UP;
-		if (avail & BIT_LEFT) avail_arr[n_avail++] = BIT_LEFT;
-		if (avail & BIT_DOWN) avail_arr[n_avail++] = BIT_DOWN;
-		move = avail_arr[rand_gen(rand) % n_avail];
+		other->next_move = other->back_dir;
+		other->back_dir = 0;
 	}
-	switch (move) {
+}
+
+void other_make_move(struct other *other, struct maze *maze)
+{
+	MAZE_GET(maze, other->x, other->y) &= ~BIT_OBSTRUCTED;
+
+	switch (other->next_move) {
 	case BIT_RIGHT:
-		other->back_dir = BIT_LEFT;
-		++other->x;
+		if (!(MAZE_GET(maze, other->x + 1, other->y) & BIT_OBSTRUCTED))
+		{
+			other->back_dir = BIT_LEFT;
+			++other->x;
+		}
 		break;
 	case BIT_UP:
-		other->back_dir = BIT_DOWN;
-		--other->y;
+		if (!(MAZE_GET(maze, other->x, other->y - 1) & BIT_OBSTRUCTED))
+		{
+			other->back_dir = BIT_DOWN;
+			--other->y;
+		}
 		break;
 	case BIT_LEFT:
-		other->back_dir = BIT_RIGHT;
-		--other->x;
+		if (!(MAZE_GET(maze, other->x - 1, other->y) & BIT_OBSTRUCTED))
+		{
+			other->back_dir = BIT_RIGHT;
+			--other->x;
+		}
 		break;
 	case BIT_DOWN:
-		other->back_dir = BIT_UP;
-		++other->y;
+		if (!(MAZE_GET(maze, other->x, other->y + 1) & BIT_OBSTRUCTED))
+		{
+			other->back_dir = BIT_UP;
+			++other->y;
+		}
 		break;
 	}
+
+	other->next_move = 0;
+
+	MAZE_GET(maze, other->x, other->y) |= BIT_OBSTRUCTED;
 }

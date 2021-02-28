@@ -21,7 +21,7 @@ static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (coords_are_ok(maze, x, y)) {
 		TILE_TYPE *t = &MAZE_GET(maze, x, y);
-		if ((*t & BIT_ADDED) == 0) {
+		if (!(*t & BIT_ADDED)) {
 			struct head *h =
 				GROW(heads->arr, heads->len, heads->cap);
 			if (!h) return -1;
