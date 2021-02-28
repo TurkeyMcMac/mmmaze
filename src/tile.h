@@ -20,8 +20,8 @@ typedef unsigned char TILE_TYPE;
 /* This bit shows that the player sees the tile. (Reused BIT_ADDED.) */
 #define BIT_PLAYER_SEEN 0x10
 
-/* This bit shows that someone is obstructing the tile. (Reused BIT_PATH.) */
-#define BIT_OBSTRUCTED 0x20
+/* This bit shows that a monster is obstructing the tile. (Reused BIT_PATH.) */
+#define BIT_MONSTER 0x20
 
 /* This bit shows that there's cash in the tile. */
 #define BIT_CASH 0x40

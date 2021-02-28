@@ -1,7 +1,7 @@
 #include "maze.h"
 #include "move.h"
 #include "grow.h"
-#include "other.h"
+#include "monster.h"
 #include "player.h"
 #include "rand.h"
 #include <curses.h>
@@ -14,7 +14,7 @@
 
 #define MAX_CASH 20
 
-#define OTHER_SPAWN_CHANCE (MAX_RAND / 30)
+#define MONSTER_SPAWN_CHANCE (MAX_RAND / 30)
 
 #define CASH_SPAWN_CHANCE (MAX_RAND / 10)
 
@@ -31,8 +31,8 @@ static int find_without_flags(const struct maze *maze, int *x, int *y,
 
 static chtype get_tile_char(TILE_TYPE tile)
 {
-	if (tile & BIT_OBSTRUCTED) {
-		return 'O';
+	if (tile & BIT_MONSTER) {
+		return 'M';
 	} else if (tile & BIT_CASH) {
 		return '$';
 	} else {
@@ -68,9 +68,9 @@ int main(void)
 	int px = 0, py = 0;
 	int cash_collected = 0;
 
-	struct other *others = NULL;
-	size_t n_others = 0;
-	size_t others_cap = 0;
+	struct monster *monsters = NULL;
+	size_t n_monsters = 0;
+	size_t monsters_cap = 0;
 
 	int n_cash = 0;
 
@@ -134,8 +134,8 @@ int main(void)
 			cash_collected);
 		mvprintw(1, VIEW_DIST * 2 + 1, "Time: %ld", ticks);
 		mvprintw(2, VIEW_DIST * 2 + 1, "Unclaimed cash: $%d", n_cash);
-		mvprintw(3, VIEW_DIST * 2 + 1, "Others: %u",
-			(unsigned)n_others);
+		mvprintw(3, VIEW_DIST * 2 + 1, "Monsters: %u",
+			(unsigned)n_monsters);
 		move(5, VIEW_DIST * 2 + 1);
 		if (px == end_x && py == end_y) {
 			addstr("Press SPACE to exit");
@@ -189,18 +189,19 @@ int main(void)
 
 		player_mark_seen(&maze, px, py, VIEW_DIST);
 
-		for (i = 0; i < n_others; ++i) {
-			other_start_move_random(&others[i], &maze, &rand);
+		for (i = 0; i < n_monsters; ++i) {
+			monster_start_move_random(&monsters[i], &maze, &rand);
 		}
 
-		if (rand_gen(&rand) < OTHER_SPAWN_CHANCE) {
-			struct other *o = GROW(others, n_others, others_cap);
+		if (rand_gen(&rand) < MONSTER_SPAWN_CHANCE) {
+			struct monster *m =
+				GROW(monsters, n_monsters, monsters_cap);
 			int x, y;
-			if (o
+			if (m
 			 && find_without_flags(&maze, &x, &y,
-					BIT_OBSTRUCTED | BIT_PLAYER_SEEN,
+					BIT_MONSTER | BIT_PLAYER_SEEN,
 					&rand) >= 0)
-				other_init(o, x, y, &maze);
+				monster_init(m, x, y, &maze);
 		}
 
 		if (n_cash < MAX_CASH) {
@@ -214,8 +215,8 @@ int main(void)
 			}
 		}
 
-		for (i = 0; i < n_others; ++i) {
-			other_make_move(&others[i], &maze);
+		for (i = 0; i < n_monsters; ++i) {
+			monster_make_move(&monsters[i], &maze);
 		}
 
 		++ticks;
