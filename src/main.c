@@ -10,13 +10,24 @@
 
 #define VIEW_DIST 11
 
-#define MAX_TRIES 10
-
 #define MAX_CASH 20
 
 #define MONSTER_INTERVAL 30
 
 #define CASH_INTERVAL 10
+
+#define MAX_TRIES 10
+
+static int find_without_flags(const struct maze *maze, int *x, int *y,
+	TILE_TYPE without, RAND_TYPE *rand)
+{
+	int tries = MAX_TRIES;
+	while (tries-- > 0) {
+		maze_random_node(maze, x, y, rand);
+		if (!(MAZE_GET(maze, *x, *y) & without)) return 0;
+	}
+	return -1;
+}
 
 static chtype get_tile_char(TILE_TYPE tile)
 {
@@ -187,20 +198,19 @@ int main(void)
 		if (ticks % MONSTER_INTERVAL == 0) {
 			struct monster *m =
 				GROW(monsters, n_monsters, monsters_cap);
-			if (m) {
-				int x, y;
-				maze_random_node(&maze, &x, &y, &rand);
-				if (!(MAZE_GET(&maze, x, y) & (BIT_MONSTER
-						| BIT_PLAYER_SEEN)))
-					monster_init(m, x, y, &maze);
-			}
+			int x, y;
+			if (m
+			 && find_without_flags(&maze, &x, &y,
+					BIT_MONSTER | BIT_PLAYER_SEEN,
+					&rand) >= 0)
+				monster_init(m, x, y, &maze);
 		}
 
 		if (n_cash < MAX_CASH && ticks % CASH_INTERVAL == 0) {
 			int x, y;
-			maze_random_node(&maze, &x, &y, &rand);
-			if (!(MAZE_GET(&maze, x, y) & (BIT_CASH
-					| BIT_PLAYER_SEEN))) {
+			if (find_without_flags(&maze, &x, &y,
+					BIT_CASH | BIT_PLAYER_SEEN, &rand) >= 0)
+			{
 				MAZE_GET(&maze, x, y) |= BIT_CASH;
 				++n_cash;
 			}
