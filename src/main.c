@@ -18,17 +18,6 @@
 
 #define CASH_SPAWN_CHANCE (MAX_RAND / 10)
 
-static int find_without_flags(const struct maze *maze, int *x, int *y,
-	TILE_TYPE without, RAND_TYPE *rand)
-{
-	int tries = MAX_TRIES;
-	while (tries-- > 0) {
-		maze_random_node(maze, x, y, rand);
-		if (!(MAZE_GET(maze, *x, *y) & without)) return 0;
-	}
-	return -1;
-}
-
 static chtype get_tile_char(TILE_TYPE tile)
 {
 	if (tile & BIT_MONSTER) {
@@ -196,20 +185,20 @@ int main(void)
 		if (rand_gen(&rand) < MONSTER_SPAWN_CHANCE) {
 			struct monster *m =
 				GROW(monsters, n_monsters, monsters_cap);
-			int x, y;
-			if (m
-			 && find_without_flags(&maze, &x, &y,
-					BIT_MONSTER | BIT_PLAYER_SEEN,
-					&rand) >= 0)
-				monster_init(m, x, y, &maze);
+			if (m) {
+				int x, y;
+				maze_random_node(&maze, &x, &y, &rand);
+				if (!(MAZE_GET(&maze, x, y) & (BIT_MONSTER
+						| BIT_PLAYER_SEEN)))
+					monster_init(m, x, y, &maze);
+			}
 		}
 
-		if (n_cash < MAX_CASH) {
+		if (n_cash < MAX_CASH && rand_gen(&rand) < CASH_SPAWN_CHANCE) {
 			int x, y;
-			if (rand_gen(&rand) < CASH_SPAWN_CHANCE
-			 && find_without_flags(&maze, &x, &y,
-					BIT_CASH | BIT_PLAYER_SEEN, &rand) >= 0)
-			{
+			maze_random_node(&maze, &x, &y, &rand);
+			if (!(MAZE_GET(&maze, x, y) & (BIT_CASH
+					| BIT_PLAYER_SEEN))) {
 				MAZE_GET(&maze, x, y) |= BIT_CASH;
 				++n_cash;
 			}
