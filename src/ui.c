@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "game.h"
+#include "help.h"
 #include <curses.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +8,6 @@
 
 static void run_main_menu(void);
 static void run_play_menu(void);
-static void run_help(void);
 
 void ui_run(void)
 {
@@ -26,7 +26,7 @@ static void run_main_menu(void)
 		mvaddstr(0, 0,
 			"Monster Money Maze\n\n"
 			"(p) Play\n"
-			"(h) Help\n"
+			"(H) Help\n"
 			"(q) Quit");
 		clrtobot();
 
@@ -34,8 +34,8 @@ static void run_main_menu(void)
 		case 'p':
 			run_play_menu();
 			break;
-		case 'h':
-			run_help();
+		case 'H':
+			help_run();
 			break;
 		case 'q':
 			return;
@@ -83,8 +83,8 @@ static void run_play_menu(void)
 	struct game_params params = GAME_DEFAULT_INITIALIZER;
 	for (;;) {
 		mvaddstr(0, 0, "Parameters\n\n");
-		printw("(w) Width: %d\n", params.width);
-		printw("(h) Height: %d\n", params.height);
+		printw("(w) Width (nodes): %d\n", params.width);
+		printw("(h) Height (nodes): %d\n", params.height);
 		printw("(v) View distance: %d\n", params.view_dist);
 		printw("(c) Cash placement interval: %d\n",
 			params.cash_interval);
@@ -95,6 +95,7 @@ static void run_play_menu(void)
 			params.seed == GAME_SEED_DEFAULT ? " (random)" : "");
 		addstr(
 			"\n(p) Play\n"
+			"(H) Help\n"
 			"(q) Cancel\n\n");
 		clrtobot();
 
@@ -127,26 +128,15 @@ static void run_play_menu(void)
 		case 's':
 			params.seed = get_param(GAME_SEED_MIN, GAME_SEED_MAX);
 			break;
+
 		case 'p':
 			if (params.seed == GAME_SEED_DEFAULT)
 				params.seed = time(NULL);
 			game_run(&params);
 			return;
-		case 'q':
-			return;
-		}
-	}
-}
-
-static void run_help(void)
-{
-	for (;;) {
-		mvaddstr(0, 0,
-			"Help\n\n"
-			"(q) Cancel");
-		clrtobot();
-
-		switch (getch()) {
+		case 'H':
+			help_parameters_run();
+			break;
 		case 'q':
 			return;
 		}

@@ -1,7 +1,8 @@
 #include "game.h"
-#include "move.h"
 #include "grow.h"
+#include "help.h"
 #include "monster.h"
+#include "move.h"
 #include "player.h"
 #include <curses.h>
 
@@ -126,7 +127,7 @@ void game_run(const struct game_params *params)
 		} else if (player_avail == 0) {
 			addstr("(e) Advance one tick");
 		} else {
-			addstr("(h) Help");
+			addstr("(H) Help");
 		}
 		clrtoeol();
 
@@ -137,10 +138,6 @@ void game_run(const struct game_params *params)
 		}
 
 		switch (getch()) {
-		case 'e':
-			do_tick = 1;
-			break;
-
 		case 'w':
 			if (player_avail & BIT_UP) {
 				player_unmark_seen(&maze, player_x, player_y,
@@ -172,6 +169,14 @@ void game_run(const struct game_params *params)
 				++player_x;
 				do_tick = 1;
 			}
+			break;
+
+		case 'e':
+			do_tick = 1;
+			break;
+
+		case 'H':
+			help_run();
 			break;
 
 		case 'q':
