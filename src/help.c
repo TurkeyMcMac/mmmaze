@@ -36,10 +36,10 @@ void help_overview_run(void)
 		"without getting got. You start at the top left and need\n"
 		"to get to the end at the bottom right. As you go, pick up\n"
 		"some $$$ along the way, and stay away from the Ms, which\n"
-		"are monsters. The cash and monsters will spawn over time.\n"
-		"You only have a limited visual range, so you can't plan\n"
-		"the whole path at once. The game is turn-based; things\n"
-		"only move when you do.";
+		"are randomly-wandering monsters. The cash and monsters\n"
+		"will spawn over time. You only have a limited visual\n"
+		"range, so you can't plan the whole path at once. The game\n"
+		"is turn-based; things only move when you do.";
 	mvprintw(0, 0, "Overview\n\n%s\n\n(q) Back", overview);
 	clrtobot();
 
