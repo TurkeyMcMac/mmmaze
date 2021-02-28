@@ -14,9 +14,9 @@
 
 #define MAX_CASH 20
 
-#define MONSTER_SPAWN_CHANCE (MAX_RAND / 30)
+#define MONSTER_INTERVAL 30
 
-#define CASH_SPAWN_CHANCE (MAX_RAND / 10)
+#define CASH_INTERVAL 10
 
 static chtype get_tile_char(TILE_TYPE tile)
 {
@@ -138,6 +138,8 @@ int main(void)
 			(long unsigned)seed);
 		refresh();
 
+		++ticks;
+
 		player_unmark_seen(&maze, px, py, VIEW_DIST);
 
 		do {
@@ -182,7 +184,7 @@ int main(void)
 			monster_start_move_random(&monsters[i], &maze, &rand);
 		}
 
-		if (rand_gen(&rand) < MONSTER_SPAWN_CHANCE) {
+		if (ticks % MONSTER_INTERVAL == 0) {
 			struct monster *m =
 				GROW(monsters, n_monsters, monsters_cap);
 			if (m) {
@@ -194,7 +196,7 @@ int main(void)
 			}
 		}
 
-		if (n_cash < MAX_CASH && rand_gen(&rand) < CASH_SPAWN_CHANCE) {
+		if (n_cash < MAX_CASH && ticks % CASH_INTERVAL == 0) {
 			int x, y;
 			maze_random_node(&maze, &x, &y, &rand);
 			if (!(MAZE_GET(&maze, x, y) & (BIT_CASH
@@ -207,8 +209,6 @@ int main(void)
 		for (i = 0; i < n_monsters; ++i) {
 			monster_make_move(&monsters[i], &maze);
 		}
-
-		++ticks;
 	} while (key != 'q');
 
 	endwin();
