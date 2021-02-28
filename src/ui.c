@@ -3,6 +3,7 @@
 #include <curses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 static void run_main_menu(void);
 static void run_play_menu(void);
@@ -53,7 +54,7 @@ static unsigned long get_param(unsigned long min, unsigned long max)
 
 	getyx(stdscr, y, x);
 	(void)x;
-	printw("Enter a number between %lu and %lu: ", min, max);
+	printw("Enter an integer between %lu and %lu: ", min, max);
 	for (;;) {
 		char *endptr;
 		clrtoeol();
@@ -66,7 +67,7 @@ static unsigned long get_param(unsigned long min, unsigned long max)
 			clrtoeol();
 			break;
 		} else {
-			printw("Please enter a number between "
+			printw("Please enter an integer between "
 				"%lu and %lu: ", min, max);
 		}
 	}
@@ -127,6 +128,8 @@ static void run_play_menu(void)
 			params.seed = get_param(GAME_SEED_MIN, GAME_SEED_MAX);
 			break;
 		case 'p':
+			if (params.seed == GAME_SEED_DEFAULT)
+				params.seed = time(NULL);
 			game_run(&params);
 			return;
 		case 'q':
