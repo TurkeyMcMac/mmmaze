@@ -3,6 +3,8 @@
 
 #include "maze.h"
 
+/* See the in-game help for descriptions of the parameters. */
+
 #define GAME_WIDTH_DEFAULT 30
 #define GAME_WIDTH_MIN 1
 #define GAME_WIDTH_MAX MAZE_WIDTH_NODES_MAX
@@ -50,6 +52,8 @@ struct game_params {
 	GAME_MONSTER_INTERVAL_DEFAULT, \
 	GAME_SEED_DEFAULT }
 
+/* Run a game. This takes ownership of the screen but doesn't erase it when the
+ * game ends. */
 void game_run(const struct game_params *params);
 
 #endif /* GAME_H_ */

@@ -30,6 +30,7 @@ void help_run(void)
 	}
 }
 
+/* Returns when the user presses a quit key. */
 static void wait_for_quit(void)
 {
 	for (;;) {

@@ -6,60 +6,84 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* Prompts the user for numeric input in the given range. orig is the previous
+ * value. Returned is the newly given value. A prompt is displayed for the
+ * user. */
 static unsigned long get_param(unsigned long orig,
 	unsigned long min, unsigned long max)
 {
 	unsigned long param;
 	int y, x;
 
+	/* Show the cursor while getting input. */
 	curs_set(1);
 
+	/* Save the original position. */
 	getyx(stdscr, y, x);
 	printw("Enter an integer between %lu and %lu: ", min, max);
+	/* Ask for input until valid input is given. */
 	for (;;) {
+		/* The maximum input length is 31 (buf is NUL-terminated): */
 		char buf[32];
+		/* The input length: */
 		size_t len;
+		/* The endptr for strtol: */
 		char *endptr;
+		/* Clear the input area. */
 		clrtoeol();
+		/* Get the input. */
 		len = 0;
 		for (;;) {
 			int key = getch();
 			switch (key) {
+			/* Register only digits in input. */
 			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9':
 				if (len < sizeof(buf) - 1) {
 					buf[len++] = key;
+					/* Echo the input. */
 					addch(key);
 				}
 				break;
 			case '\n':
+				/* The user pressed enter. */
 				goto got_input;
 			CASES_BACKSPACE
 				if (len > 0) {
+					/* Go back and erase. */
 					addstr("\b \b");
+					/* Remove the character. */
 					--len;
 				}
 				break;
 			CASES_QUIT
+				/* If the user quits, the input is discarded and
+				 * the previous parameter value is returned. */
 				param = orig;
 				goto ret;
 			}
 		}
 	got_input:
+		/* Add a NUL-terminator. */
 		buf[len] = '\0';
+		/* Parse the input. */
 		param = strtoul(buf, &endptr, 10);
 		if (*endptr == '\0' && endptr != buf
 		 && param >= min && param <= max) {
-			break;
+			/* Return if the parameter parsed and is in range. */
+			goto ret;
 		} else {
+			/* Otherwise, ask again. */
 			mvprintw(y, x, "Please enter an integer between "
 				"%lu and %lu: ", min, max);
 		}
 	}
 
 ret:
+	/* Clear the prompt. */
 	move(y, x);
 	clrtoeol();
+	/* Hide the cursor again. */
 	curs_set(0);
 	return param;
 }
@@ -77,6 +101,7 @@ void play_menu_run(void)
 		printw("(C) Maximum placed cash: %d\n", params.max_cash);
 		printw("(m) Monster placement interval: %d\n",
 			params.monster_interval);
+		/* The default seed value is used for random seeds instead: */
 		printw("(s) Seed: %lu%s\n", (unsigned long)params.seed,
 			params.seed == GAME_SEED_DEFAULT ? " (random)" : "");
 		addstr(
@@ -118,9 +143,12 @@ void play_menu_run(void)
 			break;
 
 		case 'p':
+			/* Again, the default seed value is used for random
+			 * seeds instead: */
 			if (params.seed == GAME_SEED_DEFAULT)
 				params.seed = time(NULL);
 			game_run(&params);
+			/* Exit the parameter menu after the game ends. */
 			return;
 		case 'H':
 			help_parameters_run();

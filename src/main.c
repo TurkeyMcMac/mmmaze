@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* The version of the program: */
 #define VERSION "0.2.0"
 
 int main(int argc, char *argv[])

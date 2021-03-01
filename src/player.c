@@ -4,6 +4,7 @@
 #include "tile.h"
 #include <stdlib.h>
 
+/* The list of player sight reveal heads. */
 struct heads {
 	struct head {
 		short x, y;
@@ -11,6 +12,7 @@ struct heads {
 	size_t len, cap;
 };
 
+/* Adds a head to the maze if it has not yet been seen. */
 static int add_head(struct maze *maze, int x, int y, struct heads *heads)
 {
 	TILE_TYPE *t = &MAZE_GET(maze, x, y);
@@ -31,11 +33,14 @@ int player_mark_seen(struct maze *maze, int x, int y, int dist)
 	struct heads heads = { NULL, 0, 0 };
 	if (add_head(maze, x, y, &heads)) goto error;
 
+	/* Keep revealing for the given distance. */
 	while (dist-- > 0) {
+		/* Extend each of the heads. */
 		size_t i = heads.len;
 		while (i-- > 0) {
 			int hx = heads.arr[i].x, hy = heads.arr[i].y;
 			TILE_TYPE t = MAZE_GET(maze, hx, hy);
+			/* Add all possible heads around this one. */
 			if ((t & BIT_RIGHT)
 			 && add_head(maze, hx + 1, hy, &heads))
 				goto error;
@@ -48,6 +53,7 @@ int player_mark_seen(struct maze *maze, int x, int y, int dist)
 			if ((t & BIT_DOWN)
 			 && add_head(maze, hx, hy + 1, &heads))
 				goto error;
+			/* Remove the head. */
 			heads.arr[i] = heads.arr[--heads.len];
 		}
 	}
@@ -60,6 +66,7 @@ error:
 
 int player_unmark_seen(struct maze *maze, int x, int y, int dist)
 {
+	/* For now, the entire map is cleared, so the arguments aren't used. */
 	int x_, y_;
 	(void)x;
 	(void)y;

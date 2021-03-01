@@ -2,8 +2,12 @@
 #include "grow.h"
 #include <stdlib.h>
 
+/* This means that if a node has an extra neighbor when it is placed, it has a
+ * 1/10 chance to connect to that neighbor, forming a loop. I don't completely
+ * understand this value's effects. */
 #define LOOPINESS (MAX_RAND / 10)
 
+/* The list of heads: places that will be later incorporated into the maze. */
 struct heads {
 	struct head {
 		short x, y;
@@ -11,12 +15,13 @@ struct heads {
 	size_t len, cap;
 };
 
+/* Returns whether the coordinates are in the bounds of the maze. */
 static int coords_are_ok(const struct maze *maze, int x, int y)
 {
 	return x >= 0 && y >= 0 && x < maze->width && y < maze->height;
 }
 
-
+/* Adds a head and marks its place as added, if the place isn't added yet. */
 static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (coords_are_ok(maze, x, y)) {
@@ -33,6 +38,7 @@ static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 	return 0;
 }
 
+/* Adds up to four heads around the given place. */
 static int add_heads(const struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (add_head(maze, x + 2, y, heads)
@@ -43,14 +49,12 @@ static int add_heads(const struct maze *maze, int x, int y, struct heads *heads)
 	return 0;
 }
 
-void maze_random_node(const struct maze *maze, int *x, int *y, RAND_TYPE *rand)
+/* Incorporates the given place into the paths of the maze. */
+static void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
 {
-	*x = (unsigned)rand_gen(rand) % ((maze->width + 1) / 2) * 2;
-	*y = (unsigned)rand_gen(rand) % ((maze->height + 1) / 2) * 2;
-}
-
-void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
-{
+	/* The direction table. dx an dy are the relative offset from this
+	 * place.here_mask is the bit added to the place here, and there_mask is
+	 * the bit added to the place being connected to: */
 	static const struct direction {
 		int dx, dy;
 		TILE_TYPE here_mask, there_mask;
@@ -60,26 +64,33 @@ void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
 		{ -2,  0, BIT_LEFT , BIT_RIGHT },
 		{  0, +2, BIT_DOWN , BIT_UP    }
 	};
-
+	/* The tile here: */
 	TILE_TYPE *here = &MAZE_GET(maze, x, y);
-
+	/* The list of indices of available directions in which to expand: */
 	size_t around[4];
 	size_t n_around = 0;
 	size_t i;
 	for (i = 0; i < 4; ++i) {
 		const struct direction *d = &dirs[i];
 		int tx = x + d->dx, ty = y + d->dy;
+		/* List directions going to places already added to the maze. */
 		if (coords_are_ok(maze, tx, ty)
 		 && (MAZE_GET(maze, tx, ty) & BIT_PATH))
 			around[n_around++] = i;
 	}
 
+	/* Connect to the rest of the maze, if possible. */
 	if (n_around > 0) {
+		/* The index of a randomly chosen neighbor: */
 		size_t j = (size_t)rand_gen(rand) % n_around;
+		/* The randomly chosen direction: */
 		const struct direction *d = &dirs[around[j]];
+		/* Connect the paths. */
 		*here |= d->here_mask;
 		MAZE_GET(maze, x + d->dx, y + d->dy) |= d->there_mask;
+		/* Add a loop, maybe. */
 		if (n_around > 1 && rand_gen(rand) < LOOPINESS) {
+			/* Do the same thing as above. */
 			around[j] = around[--n_around];
 			j = (size_t)rand_gen(rand) % n_around;
 			d = &dirs[around[j]];
@@ -88,9 +99,11 @@ void add_path(struct maze *maze, int x, int y, RAND_TYPE *rand)
 		}
 	}
 
+	/* Mark the place as added to the maze. */
 	*here |= BIT_PATH;
 }
 
+/* Removes bits which were only used in generation and must be reused later. */
 static void remove_intermediate_bits(struct maze *maze)
 {
 	int x, y;
@@ -101,6 +114,8 @@ static void remove_intermediate_bits(struct maze *maze)
 	}
 }
 
+/* Connects the paths after they are all generated. Before this, the paths are
+ * all spaced out on even coordinates only and are not truly connected. */
 static void connect_paths(struct maze *maze)
 {
 	int x, y;
@@ -126,16 +141,19 @@ int maze_generate(struct maze *maze, int width_nodes, int height_nodes,
 	 || height_nodes > MAZE_HEIGHT_NODES_MAX)
 		goto error_dims;
 
+	/* Convert the dimensions in nodes to dimensions in tiles. */
 	maze->width = width_nodes * 2 - 1;
 	maze->height = height_nodes * 2 - 1;
 	maze->tiles = calloc((size_t)(maze->width * maze->height),
 		sizeof(*maze->tiles));
 	if (!maze->tiles) goto error_maze_alloc;
 
+	/* Generate the first node. */
 	maze_random_node(maze, &x, &y, rand);
 	add_path(maze, x, y, rand);
 	if (add_heads(maze, x, y, &heads)) goto error_heads;
 
+	/* Fill in places until none are left. */
 	while (heads.len > 0) {
 		size_t i = (size_t)rand_gen(rand) % heads.len;
 		add_path(maze, heads.arr[i].x, heads.arr[i].y, rand);
@@ -157,6 +175,13 @@ error_heads:
 error_maze_alloc:
 error_dims:
 	return -1;
+}
+
+void maze_random_node(const struct maze *maze, int *x, int *y, RAND_TYPE *rand)
+{
+	/* Make sure the coordinates are even: */
+	*x = (unsigned)rand_gen(rand) % ((maze->width + 1) / 2) * 2;
+	*y = (unsigned)rand_gen(rand) % ((maze->height + 1) / 2) * 2;
 }
 
 void maze_destroy(struct maze *maze)
