@@ -6,6 +6,7 @@
 #include "move.h"
 #include "player.h"
 #include <curses.h>
+#include <stdlib.h>
 
 #define MAX_FIND_TRIES 10
 
@@ -53,6 +54,7 @@ static chtype get_tile_char(TILE_TYPE tile)
 void game_run(const struct game_params *params)
 {
 	struct maze maze;
+	int maze_created = 0;
 
 	int end_x, end_y;
 
@@ -73,8 +75,9 @@ void game_run(const struct game_params *params)
 
 	if (maze_generate(&maze, params->width, params->height, &rand)) {
 		mvaddstr(0, 0, "The maze could not be created.\n\n(q) Quit");
-		goto end_unconditionally;
+		goto end_affirmative;
 	}
+	maze_created = 1;
 
 	end_x = maze.width - 1;
 	end_y = maze.height - 1;
@@ -135,7 +138,7 @@ void game_run(const struct game_params *params)
 		if (MAZE_GET(&maze, player_x, player_y) & BIT_MONSTER) {
 			erase();
 			mvaddstr(0, 0, "A monster got you.\n\n(q) Continue");
-			goto end_unconditionally;
+			goto end_affirmative;
 		}
 
 		switch (getch()) {
@@ -190,16 +193,15 @@ void game_run(const struct game_params *params)
 				mvprintw(3, 0, "Seed: %lu",
 					(long unsigned)params->seed);
 				mvaddstr(5, 0, "(q) Continue\n");
-				goto end_unconditionally;
+				goto end_affirmative;
 			} else {
 				int key;
 				mvaddstr(0, 0, "Quit the level?\n\n"
 					"(y) Yes\n(n) No");
 				do {
 					key = getch();
-					if (key == 'y') return;
+					if (key == 'y') goto end;
 				} while (key != 'n');
-				do_tick = 0;
 			}
 			break;
 		}
@@ -252,11 +254,14 @@ void game_run(const struct game_params *params)
 		}
 	}
 
-end_unconditionally:
+end_affirmative:
 	for (;;) {
 		switch (getch()) {
 		CASES_QUIT
-			return;
+			goto end;
 		}
 	}
+end:
+	free(monsters);
+	if (maze_created) maze_destroy(&maze);
 }
