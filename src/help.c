@@ -48,9 +48,9 @@ void help_overview_run(void)
 		"to get to the end at the bottom right. As you go, pick up\n"
 		"some $$$ along the way, and stay away from the Ms, which\n"
 		"are randomly-wandering monsters. The cash and monsters\n"
-		"will spawn over time. You only have a limited visual\n"
-		"range, so you can't plan the whole path at once. The game\n"
-		"is turn-based; things only move when you do.";
+		"will spawn over time. The goal is to leave with as much\n"
+		"money as possible, but the longer you stay, the more\n"
+		"monsters appear, so be careful!";
 	mvprintw(0, 0, "Overview\n\n%s\n\n(q) Back", overview);
 	clrtobot();
 
@@ -61,9 +61,10 @@ void help_controls_run(void)
 {
 	static const char controls[] =
 		"You can move with the arrow keys, WASD, or HJKL. Pressing\n"
-		"E makes you idle for one game tick. You can quit an\n"
-		"ongoing game with Q. Enter an uppercase H to bring up\n"
-		"this help in-game. That's about it.";
+		"E makes you idle for one game tick. Time only passes when\n"
+		"you move or idle. You can quit an ongoing game with Q.\n"
+		"Enter an uppercase H to bring up this help in-game.\n"
+		"That's about it.";
 	mvprintw(0, 0, "Controls\n\n%s\n\n(q) Back", controls);
 	clrtobot();
 
