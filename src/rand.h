@@ -3,7 +3,7 @@
 
 #include <limits.h>
 
-#define MAX_RAND 4294967295
+#define MAX_RAND 4294967295UL
 
 #if UINT_MAX >= MAX_RAND
 typedef unsigned RAND_TYPE;
