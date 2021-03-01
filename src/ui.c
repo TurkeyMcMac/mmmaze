@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "common-keys.h"
 #include "help.h"
 #include "play-menu.h"
 #include <curses.h>
@@ -20,7 +21,7 @@ static void run_main_menu(void)
 		case 'H':
 			help_run();
 			break;
-		case 'q':
+		CASES_QUIT
 			return;
 		}
 	}

@@ -1,4 +1,5 @@
 #include "help.h"
+#include "common-keys.h"
 #include <curses.h>
 
 void help_run(void)
@@ -23,7 +24,17 @@ void help_run(void)
 			help_parameters_run();
 			break;
 
-		case 'q':
+		CASES_QUIT
+			return;
+		}
+	}
+}
+
+static void wait_for_quit(void)
+{
+	for (;;) {
+		switch (getch()) {
+		CASES_QUIT
 			return;
 		}
 	}
@@ -43,8 +54,7 @@ void help_overview_run(void)
 	mvprintw(0, 0, "Overview\n\n%s\n\n(q) Back", overview);
 	clrtobot();
 
-	while (getch() != 'q')
-		;
+	wait_for_quit();
 }
 
 void help_controls_run(void)
@@ -57,8 +67,7 @@ void help_controls_run(void)
 	mvprintw(0, 0, "Controls\n\n%s\n\n(q) Back", controls);
 	clrtobot();
 
-	while (getch() != 'q')
-		;
+	wait_for_quit();
 }
 
 void help_parameters_run(void)
@@ -78,6 +87,5 @@ void help_parameters_run(void)
 	mvprintw(0, 0, "Parameters\n\n%s\n\n(q) Back", parameters);
 	clrtobot();
 
-	while (getch() != 'q')
-		;
+	wait_for_quit();
 }

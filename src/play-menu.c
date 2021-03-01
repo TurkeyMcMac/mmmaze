@@ -1,4 +1,5 @@
 #include "play-menu.h"
+#include "common-keys.h"
 #include "game.h"
 #include "help.h"
 #include <curses.h>
@@ -100,7 +101,7 @@ void play_menu_run(void)
 		case 'H':
 			help_parameters_run();
 			break;
-		case 'q':
+		CASES_QUIT
 			return;
 		}
 	}

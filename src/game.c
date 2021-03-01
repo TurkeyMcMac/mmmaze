@@ -1,4 +1,5 @@
 #include "game.h"
+#include "common-keys.h"
 #include "grow.h"
 #include "help.h"
 #include "monster.h"
@@ -138,9 +139,7 @@ void game_run(const struct game_params *params)
 		}
 
 		switch (getch()) {
-		case KEY_RIGHT:
-		case 'd':
-		case 'l':
+		CASES_RIGHT
 			if (player_avail & BIT_RIGHT) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -148,9 +147,7 @@ void game_run(const struct game_params *params)
 				do_tick = 1;
 			}
 			break;
-		case KEY_UP:
-		case 'w':
-		case 'k':
+		CASES_UP
 			if (player_avail & BIT_UP) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -158,9 +155,7 @@ void game_run(const struct game_params *params)
 				do_tick = 1;
 			}
 			break;
-		case KEY_LEFT:
-		case 'a':
-		case 'h':
+		CASES_LEFT
 			if (player_avail & BIT_LEFT) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -168,9 +163,7 @@ void game_run(const struct game_params *params)
 				--player_x;
 			}
 			break;
-		case KEY_DOWN:
-		case 's':
-		case 'j':
+		CASES_DOWN
 			if (player_avail & BIT_DOWN) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
@@ -187,7 +180,7 @@ void game_run(const struct game_params *params)
 			help_run();
 			break;
 
-		case 'q':
+		CASES_QUIT
 			erase();
 			if (player_x == end_x && player_y == end_y) {
 				mvaddstr(0, 0, "You finished!\n");
@@ -260,6 +253,10 @@ void game_run(const struct game_params *params)
 	}
 
 end_unconditionally:
-	while (getch() != 'q')
-		;
+	for (;;) {
+		switch (getch()) {
+		CASES_QUIT
+			return;
+		}
+	}
 }
