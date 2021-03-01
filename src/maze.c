@@ -137,12 +137,11 @@ int maze_generate(struct maze *maze, int width_nodes, int height_nodes,
 	if (add_heads(maze, x, y, &heads)) goto error_heads;
 
 	while (heads.len > 0) {
-		struct head *h =
-			&heads.arr[(size_t)rand_gen(rand) % heads.len];
-		add_path(maze, h->x, h->y, rand);
-		if (add_heads(maze, h->x, h->y, &heads))
+		size_t i = (size_t)rand_gen(rand) % heads.len;
+		add_path(maze, heads.arr[i].x, heads.arr[i].y, rand);
+		if (add_heads(maze, heads.arr[i].x, heads.arr[i].y, &heads))
 			goto error_heads;
-		*h = heads.arr[--heads.len];
+		heads.arr[i] = heads.arr[--heads.len];
 	}
 	free(heads.arr);
 
