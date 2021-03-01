@@ -62,7 +62,7 @@ void help_controls_run(void)
 {
 	static const char controls[] =
 		"You can move with the arrow keys, WASD, or HJKL. Pressing\n"
-		"E makes you idle for one game tick. Time only passes when\n"
+		"I makes you idle for one game tick. Time only passes when\n"
 		"you move or idle. You can quit an ongoing game with Q.\n"
 		"Enter an uppercase H to bring up this help in-game.\n"
 		"That's about it.";

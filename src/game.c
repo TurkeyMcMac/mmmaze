@@ -153,7 +153,7 @@ void game_run(const struct game_params *params)
 			addstr("(q) Finish maze");
 		} else if (player_avail == 0) {
 			/* Hint that the player can wait when they are stuck. */
-			addstr("(e) Advance one tick");
+			addstr("(i) Advance one tick");
 		} else {
 			/* Tell the player how to get help. */
 			addstr("(H) Help");
@@ -202,7 +202,7 @@ void game_run(const struct game_params *params)
 			}
 			break;
 
-		case 'e':
+		case 'i':
 			/* Idle. */
 			do_tick = 1;
 			break;

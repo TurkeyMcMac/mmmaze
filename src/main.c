@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* The version of the program: */
-#define VERSION "0.2.1"
+#define VERSION "0.2.2"
 
 int main(int argc, char *argv[])
 {
