@@ -5,6 +5,9 @@
 
 #define CASES_QUIT case 'q': case '\033':
 
+#define CASES_BACKSPACE \
+	case KEY_BACKSPACE: case '\b': case KEY_DC: case KEY_LEFT:
+
 #define CASES_RIGHT case KEY_RIGHT: case 'd': case 'l':
 
 #define CASES_UP case KEY_UP: case 'w': case 'k':

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define VERSION "0.0.3"
+#define VERSION "0.1.0"
 
 int main(int argc, char *argv[])
 {
