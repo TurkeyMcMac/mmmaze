@@ -139,13 +139,16 @@ void play_menu_run(void)
 			break;
 
 		case 'p':
-			/* Again, the default seed value is used for random
-			 * seeds instead: */
-			if (params.seed == GAME_SEED_DEFAULT)
-				params.seed = time(NULL);
-			game_run(&params);
-			/* Exit the parameter menu after the game ends. */
-			return;
+			{
+				RAND_TYPE seed_input = params.seed;
+				/* Again, the default seed value is used for
+				 * random seeds instead: */
+				if (seed_input == GAME_SEED_DEFAULT)
+					params.seed = time(NULL);
+				game_run(&params);
+				params.seed = seed_input;
+			}
+			break;
 		case 'H':
 			help_parameters_run();
 			break;
