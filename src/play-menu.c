@@ -9,7 +9,7 @@
 
 /* Prompts the user for numeric input in the given range. orig is the previous
  * value. Returned is the newly given value. A prompt is displayed for the
- * user. */
+ * user. The prompt is not cleared at the end. */
 static unsigned long get_param(unsigned long orig,
 	unsigned long min, unsigned long max)
 {
@@ -79,9 +79,6 @@ static unsigned long get_param(unsigned long orig,
 	}
 
 ret:
-	/* Clear the prompt. */
-	move(y, x);
-	clrtoeol();
 	/* Hide the cursor again. */
 	curs_set(0);
 	return param;
