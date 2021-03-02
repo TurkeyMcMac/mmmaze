@@ -23,8 +23,8 @@ static unsigned long get_param(unsigned long orig,
 	printw("Enter an integer between %lu and %lu: ", min, max);
 	/* Ask for input until valid input is given. */
 	for (;;) {
-		/* The maximum input length is 31 (buf is NUL-terminated): */
-		char buf[32];
+		/* The maximum input length is 10 (buf is NUL-terminated): */
+		char buf[11];
 		/* The input length: */
 		size_t len;
 		/* The endptr for strtol: */
