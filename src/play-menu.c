@@ -87,6 +87,9 @@ ret:
 void play_menu_run(void)
 {
 	struct game_params params = GAME_DEFAULT_INITIALIZER;
+	/* This is kept separate from the actual seed since an input of
+	 * GAME_SEED_DEFAULT is used to signal a random seed. */
+	RAND_TYPE seed_input = GAME_SEED_DEFAULT;
 	for (;;) {
 		mvaddstr(0, 0, "Parameters\n\n");
 		printw("(w) Width (nodes): %d\n", params.width);
@@ -97,9 +100,8 @@ void play_menu_run(void)
 		printw("(C) Maximum placed cash: %d\n", params.max_cash);
 		printw("(m) Monster placement interval: %d\n",
 			params.monster_interval);
-		/* The default seed value is used for random seeds instead: */
-		printw("(s) Seed: %lu%s\n", (unsigned long)params.seed,
-			params.seed == GAME_SEED_DEFAULT ? " (random)" : "");
+		printw("(s) Seed: %lu%s\n", (unsigned long)seed_input,
+			seed_input == GAME_SEED_DEFAULT ? " (random)" : "");
 		addstr(
 			"\n(p) Play\n"
 			"(H) Help\n"
@@ -134,20 +136,14 @@ void play_menu_run(void)
 				GAME_MONSTER_INTERVAL_MAX);
 			break;
 		case 's':
-			params.seed = get_param(params.seed,
+			seed_input = get_param(seed_input,
 				GAME_SEED_MIN, GAME_SEED_MAX);
 			break;
 
 		case 'p':
-			{
-				RAND_TYPE seed_input = params.seed;
-				/* Again, the default seed value is used for
-				 * random seeds instead: */
-				if (seed_input == GAME_SEED_DEFAULT)
-					params.seed = time(NULL);
-				game_run(&params);
-				params.seed = seed_input;
-			}
+			params.seed = seed_input == GAME_SEED_DEFAULT ?
+				(RAND_TYPE)time(NULL) : seed_input;
+			game_run(&params);
 			break;
 		case 'H':
 			help_parameters_run();
