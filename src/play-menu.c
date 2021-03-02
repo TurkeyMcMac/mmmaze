@@ -3,6 +3,7 @@
 #include "game.h"
 #include "help.h"
 #include <curses.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -27,8 +28,6 @@ static unsigned long get_param(unsigned long orig,
 		char buf[11];
 		/* The input length: */
 		size_t len;
-		/* The endptr for strtol: */
-		char *endptr;
 		/* Clear the input area. */
 		clrtoeol();
 		/* Get the input. */
@@ -67,9 +66,9 @@ static unsigned long get_param(unsigned long orig,
 		/* Add a NUL-terminator. */
 		buf[len] = '\0';
 		/* Parse the input. */
-		param = strtoul(buf, &endptr, 10);
-		if (*endptr == '\0' && endptr != buf
-		 && param >= min && param <= max) {
+		errno = 0;
+		param = strtoul(buf, NULL, 10);
+		if (len > 0 && errno == 0 && param >= min && param <= max) {
 			/* Return if the parameter parsed and is in range. */
 			goto ret;
 		} else {
