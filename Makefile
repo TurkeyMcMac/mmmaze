@@ -1,5 +1,5 @@
 exe = mmmaze
-CFLAGS = -ansi -pedantic -Wall -Wextra
+CFLAGS = -std=c89 -pedantic -Wall -Wextra
 LDLIBS = -lcurses
 
 CC ?= cc
