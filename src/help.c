@@ -46,12 +46,12 @@ void help_overview_run(void)
 	static const char overview[] =
 		"The objective of the game is simple: Get cash and get out\n"
 		"without getting got. You start at the top left and need\n"
-		"to get to the end at the bottom right. As you go, pick up\n"
-		"some $$$ along the way, and stay away from the Ms, which\n"
-		"are randomly-wandering monsters. The cash and monsters\n"
-		"will spawn over time. The goal is to leave with as much\n"
-		"money as possible, but the longer you stay, the more\n"
-		"monsters appear, so be careful!";
+		"to get to the end at the bottom right (marked with an E.)\n"
+		"As you go, pick up some $$$ along the way, and stay away\n"
+		"from the Ms, which are randomly-wandering monsters. The\n"
+		"cash and monsters will spawn over time. The goal is to\n"
+		"leave with as much money as possible, but the longer you\n"
+		"stay, the more monsters appear, so be careful!";
 	mvprintw(0, 0, "Overview\n\n%s\n\n(q) Back", overview);
 	clrtobot();
 
