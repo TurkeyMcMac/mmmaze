@@ -14,3 +14,14 @@ The code can be compiled with a C89 compiler and a Curses library. The code
 works on Windows using PDCurses. To run the program, you should probably have a
 terminal with dimensions of at least 80x23 that distinguishes uppercase and
 lowercase letters.
+
+## Windows Support
+
+You can download a pre-built Windows binary from the GitHub releases section.
+My procedure to build it using MingW and PDCurses is as follows:
+
+    make -C ../PDCurses/wincon -j CC=x86_64-w64-mingw32-gcc CFLAGS='-I.. -Os -flto' pdcurses.a &&
+    make exe=mmmaze.exe CC=x86_64-w64-mingw32-gcc CFLAGS='-ansi -pedantic -Wall -Wextra -I../PDCurses -Os -flto -Wl,--gc-sections,--strip-all' LDLIBS='../PDCurses/wincon/pdcurses.a'
+
+(I keep the PDCurses root directory next to this project's root directory on my
+computer, which is why the above references `../PDCurses`.)
