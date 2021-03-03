@@ -3,7 +3,8 @@
 
 #include "maze.h"
 
-/* See the in-game help for descriptions of the parameters. */
+/* See the in-game help for descriptions of the parameters. The maximum maximum
+ * is 999999999 due to how parameters are input. */
 
 #define GAME_WIDTH_DEFAULT 40
 #define GAME_WIDTH_MIN 1
@@ -19,7 +20,7 @@
 
 #define GAME_CASH_INTERVAL_DEFAULT 6
 #define GAME_CASH_INTERVAL_MIN 1
-#define GAME_CASH_INTERVAL_MAX 1000
+#define GAME_CASH_INTERVAL_MAX 1000000UL
 
 #define GAME_MAX_CASH_DEFAULT 50
 #define GAME_MAX_CASH_MIN 0
@@ -27,11 +28,11 @@
 
 #define GAME_MONSTER_INTERVAL_DEFAULT 18
 #define GAME_MONSTER_INTERVAL_MIN 1
-#define GAME_MONSTER_INTERVAL_MAX 1000
+#define GAME_MONSTER_INTERVAL_MAX 1000000UL
 
 #define GAME_SEED_DEFAULT 0
 #define GAME_SEED_MIN 0
-#define GAME_SEED_MAX MAX_RAND
+#define GAME_SEED_MAX 500000000UL
 
 struct game_params {
 	int width;

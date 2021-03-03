@@ -3,13 +3,12 @@
 #include "game.h"
 #include "help.h"
 #include <curses.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <time.h>
 
-/* Prompts the user for numeric input in the given range. orig is the previous
- * value. Returned is the newly given value. A prompt is displayed for the
- * user. The prompt is not cleared at the end. */
+/* Prompts the user for numeric input in the given range. The min and max must
+ * not be more than 9 decimal digits. orig is the previous value. Returned is
+ * the newly given value. A prompt is displayed for the user. The prompt is not
+ * cleared at the end. */
 static unsigned long get_param(unsigned long orig,
 	unsigned long min, unsigned long max)
 {
@@ -24,10 +23,10 @@ static unsigned long get_param(unsigned long orig,
 	printw("Enter an integer between %lu and %lu: ", min, max);
 	/* Ask for input until valid input is given. */
 	for (;;) {
-		/* The maximum input length is 10 (buf is NUL-terminated): */
-		char buf[11];
-		/* The input length: */
-		size_t len;
+		/* The maximum input length is 9 to prevent overflow: */
+		char buf[9];
+		/* The input length and an iterator for the input: */
+		size_t len, i;
 		/* Clear the input area. */
 		clrtoeol();
 		/* Get the input. */
@@ -38,7 +37,7 @@ static unsigned long get_param(unsigned long orig,
 			/* Register only digits in input. */
 			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9':
-				if (len < sizeof(buf) - 1) {
+				if (len < sizeof(buf)) {
 					buf[len++] = key;
 					/* Echo the input. */
 					addch(key);
@@ -63,13 +62,16 @@ static unsigned long get_param(unsigned long orig,
 			}
 		}
 	got_input:
-		/* Add a NUL-terminator. */
-		buf[len] = '\0';
-		/* Parse the input. */
-		errno = 0;
-		param = strtoul(buf, NULL, 10);
-		if (len > 0 && errno == 0 && param >= min && param <= max) {
-			/* Return if the parameter parsed and is in range. */
+		/* Parse the given integer. */
+		param = 0;
+		for (i = 0; i < len; ++i) {
+			/* There's no need for overflow checking due to the
+			 * limit of 9 digits. */
+			param = param * 10UL + (unsigned long)(buf[i] - '0');
+		}
+		if (len > 0 && param >= min && param <= max) {
+			/* The input is good if at least one digit was entered
+			 * and the number is in-range. */
 			goto ret;
 		} else {
 			/* Otherwise, ask again. */
@@ -88,8 +90,8 @@ void play_menu_run(void)
 {
 	struct game_params params = GAME_DEFAULT_INITIALIZER;
 	/* This is kept separate from the actual seed since an input of
-	 * GAME_SEED_DEFAULT is used to signal a random seed. */
-	RAND_TYPE seed_input = GAME_SEED_DEFAULT;
+	 * GAME_SEED_MIN is used to signal a random actual seed. */
+	RAND_TYPE seed_input = params.seed;
 	for (;;) {
 		mvaddstr(0, 0, "Parameters\n\n");
 		printw("(w) Width (nodes): %d\n", params.width);
@@ -101,7 +103,7 @@ void play_menu_run(void)
 		printw("(m) Monster placement interval: %d\n",
 			params.monster_interval);
 		printw("(s) Seed: %lu%s\n", (unsigned long)seed_input,
-			seed_input == GAME_SEED_DEFAULT ? " (random)" : "");
+			seed_input == GAME_SEED_MIN ? " (random)" : "");
 		addstr(
 			"\n(p) Play\n"
 			"(H) Help\n"
@@ -141,8 +143,14 @@ void play_menu_run(void)
 			break;
 
 		case 'p':
-			params.seed = seed_input == GAME_SEED_DEFAULT ?
-				(RAND_TYPE)time(NULL) : seed_input;
+			if (seed_input > GAME_SEED_MIN) {
+				params.seed = seed_input;
+			} else {
+				/* Generate a seed in the range (min, max]. */
+				params.seed = (unsigned long)time(NULL)
+					% (GAME_SEED_MAX - GAME_SEED_MIN)
+					+ GAME_SEED_MIN + 1;
+			}
 			game_run(&params);
 			break;
 		case 'H':
