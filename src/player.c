@@ -66,14 +66,16 @@ error:
 
 int player_unmark_seen(struct maze *maze, int x, int y, int dist)
 {
-	/* For now, the entire map is cleared, so the arguments aren't used. */
-	int x_, y_;
-	(void)x;
-	(void)y;
-	(void)dist;
-	for (y_ = 0; y_ < maze->height; ++y_) {
-		for (x_ = 0; x_ < maze->width; ++x_) {
-			MAZE_GET(maze, x_, y_) &= ~BIT_PLAYER_SEEN;
+	/* A few extra tiles are cleared. */
+	int start_x = x - dist, start_y = y - dist;
+	int end_x = x + dist, end_y = y + dist;
+	if (start_x < 0) start_x = 0;
+	if (start_y < 0) start_y = 0;
+	if (end_x >= maze->width) end_x = maze->width - 1;
+	if (end_y >= maze->height) end_y = maze->height - 1;
+	for (y = start_y; y <= end_y; ++y) {
+		for (x = start_x; x <= end_x; ++x) {
+			MAZE_GET(maze, x, y) &= ~BIT_PLAYER_SEEN;
 		}
 	}
 	return 0;
