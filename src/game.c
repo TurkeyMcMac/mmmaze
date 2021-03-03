@@ -189,8 +189,8 @@ void game_run(const struct game_params *params)
 			if (player_avail & BIT_LEFT) {
 				player_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
-				do_tick = 1;
 				--player_x;
+				do_tick = 1;
 			}
 			break;
 		CASES_DOWN
