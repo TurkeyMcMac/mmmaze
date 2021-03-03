@@ -1,12 +1,17 @@
 #include "ui.h"
 #include "version.h"
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 int main(int argc, char *argv[])
 {
-	const char *progname = argv[0] ? argv[0] : "(no-name)";
+	const char *progname;
+
+	setlocale(LC_ALL, "");
+
+	progname = argv[0] ? argv[0] : "(no-name)";
 	if (argc > 2) {
 		fprintf(stderr, "%s: Too many arguments\n", progname);
 		return EXIT_FAILURE;
