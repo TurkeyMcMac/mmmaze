@@ -15,7 +15,19 @@ works on Windows using PDCurses. To run the program, you should probably have a
 terminal with dimensions of at least 80x23 that distinguishes uppercase and
 lowercase letters.
 
-## Windows Support
+## Building/Installation
+
+### Unix
+
+On Unix, you can compile `mmmaze` with `make`, or you can compile it manually:
+
+    cc -o mmmaze src/*.c -lcurses
+
+If you have Homebrew, you can also install the game like so:
+
+    brew install turkeymcmac/tap/mmmaze
+
+### Windows
 
 You can download a pre-built Windows binary from the GitHub releases section.
 It runs on the Windows Console specifically. My procedure to build it using
