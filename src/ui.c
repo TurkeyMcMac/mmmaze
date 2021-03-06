@@ -30,6 +30,7 @@ static void run_main_menu(void)
 void ui_run(void)
 {
 	initscr();
+	cbreak();
 	noecho();
 	curs_set(0);
 	keypad(stdscr, TRUE);
