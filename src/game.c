@@ -104,6 +104,13 @@ void game_run(const struct game_params *params)
 		/* Coordinates relative to the player, for iteration: */
 		int x, y;
 
+		/* Make the player lose if a monster is upon them. */
+		if (MAZE_GET(&maze, player_x, player_y) & BIT_MONSTER) {
+			mvaddstr(0, 0, "A monster got you.\n\n(q) Continue");
+			clrtobot();
+			goto end_affirmative;
+		}
+
 		/* Calculate available directions: */
 		player_avail = move_get_available(&maze, player_x, player_y);
 		/* Draw the tiles that could be visible to the player: */
@@ -159,13 +166,6 @@ void game_run(const struct game_params *params)
 			addstr("(H) Help");
 		}
 		clrtoeol();
-
-		/* Make the player lose if a monster is upon them. */
-		if (MAZE_GET(&maze, player_x, player_y) & BIT_MONSTER) {
-			erase();
-			mvaddstr(0, 0, "A monster got you.\n\n(q) Continue");
-			goto end_affirmative;
-		}
 
 		/* Otherwise, get player input. */
 		switch (getch()) {
