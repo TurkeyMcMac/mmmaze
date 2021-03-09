@@ -82,7 +82,7 @@ void game_run(const struct game_params *params)
 
 	if (maze_generate(&maze, params->width, params->height, &rand)) {
 		mvaddstr(0, 0, "The maze could not be created.\n\n(q) Quit");
-		goto end_affirmative;
+		goto end_with_prompt;
 	}
 	/* After generation, mark the maze as such. */
 	maze_created = 1;
@@ -107,8 +107,7 @@ void game_run(const struct game_params *params)
 		/* Make the player lose if a monster is upon them. */
 		if (MAZE_GET(&maze, player_x, player_y) & BIT_MONSTER) {
 			mvaddstr(0, 0, "A monster got you.\n\n(q) Continue");
-			clrtobot();
-			goto end_affirmative;
+			goto end_with_prompt;
 		}
 
 		/* Calculate available directions: */
@@ -209,26 +208,27 @@ void game_run(const struct game_params *params)
 
 		case 'H':
 			help_run();
+			erase();
 			break;
 
 		CASES_QUIT
-			erase();
 			if (player_x == end_x && player_y == end_y) {
 				/* The player quits and completes the game. */
-				mvaddstr(0, 0, "You finished!\n");
-				mvprintw(1, 0, "Cash collected: $%d",
-					cash_collected);
-				mvprintw(2, 0, "Time: %lu", ticks);
-				mvprintw(3, 0, "Seed: %lu",
-					(long unsigned)params->seed);
-				mvaddstr(5, 0, "(q) Continue\n");
-				goto end_affirmative;
+				mvprintw(0, 0,
+					"You finished!\n"
+					"Cash collected: $%d\n"
+					"Time: %lu\n"
+					"Seed: %lu\n\n"
+					"(q) Continue", cash_collected, ticks,
+					(unsigned long)params->seed);
+				goto end_with_prompt;
 			} else {
 				/* The player quits in another situation. */
 				int key;
 				/* In this case, ask for confirmation first. */
 				mvaddstr(0, 0, "Quit the level?\n\n"
 					"(y) Yes\n(n) No");
+				clrtobot();
 				do {
 					key = getch();
 					if (key == 'y') goto end;
@@ -294,7 +294,9 @@ void game_run(const struct game_params *params)
 		}
 	}
 
-end_affirmative:
+end_with_prompt:
+	/* Finish drawing the prompt. */
+	clrtobot();
 	/* End the game and make sure the player sees something first. */
 	for (;;) {
 		switch (getch()) {

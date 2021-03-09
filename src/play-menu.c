@@ -18,6 +18,8 @@ static unsigned long get_param(unsigned long orig,
 	/* Show the cursor while getting input. */
 	curs_set(1);
 
+	/* Move below the previously drawn text. */
+	addstr("\n\n");
 	/* Save the original position. */
 	getyx(stdscr, y, x);
 	printw("Enter an integer between %lu and %lu: ", min, max);
@@ -107,7 +109,7 @@ void play_menu_run(void)
 		addstr(
 			"\n(p) Play\n"
 			"(H) Help\n"
-			"(q) Cancel\n\n");
+			"(q) Cancel");
 		clrtobot();
 
 		switch (getch()) {
