@@ -10,7 +10,7 @@
 
 /* Cases synonymous with BACKSPACE for our purposes. */
 #define CASES_BACKSPACE \
-	case KEY_BACKSPACE: case '\b': case KEY_DC: case KEY_LEFT:
+	case KEY_BACKSPACE: case '\b': case KEY_DC: case KEY_LEFT: case '\177':
 
 /* Cases for rightward movement. */
 #define CASES_RIGHT case KEY_RIGHT: case 'd': case 'l':
