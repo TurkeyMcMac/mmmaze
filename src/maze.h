@@ -21,8 +21,9 @@ struct maze {
 #define MAZE_WIDTH_NODES_MAX 90
 #define MAZE_HEIGHT_NODES_MAX 90
 
-/* Generates a maze with the random state. Returns 0 on success or -1 on
- * allocation failure. */
+/* Generates a maze with the random state. The width and height in nodes must be
+ * positive and are also constrained by the constants above. Returns 0 on
+ * success or -1 on allocation failure/invalid arguments. */
 int maze_generate(struct maze *maze, int width_nodes, int height_nodes,
 	RAND_TYPE *rand);
 
