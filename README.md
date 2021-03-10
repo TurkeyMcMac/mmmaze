@@ -21,7 +21,7 @@ lowercase letters.
 
 On Unix, you can compile `mmmaze` with `make`, or you can compile it manually:
 
-    cc -o mmmaze src/*.c -lcurses
+    cc -o mmmaze -D_XOPEN_SOURCE src/*.c -lcurses
 
 If you have Homebrew, you can also install the game like so:
 
