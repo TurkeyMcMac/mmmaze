@@ -64,8 +64,7 @@ void help_controls_run(void)
 		"You can move with the arrow keys, WASD, or HJKL. Pressing\n"
 		"I makes you idle for one game tick. Time only passes when\n"
 		"you move or idle. You can quit an ongoing game with Q.\n"
-		"Enter an uppercase H to bring up this help in-game.\n"
-		"That's about it.";
+		"Enter ? to bring up this help in-game. That's about it.";
 	mvprintw(0, 0, "Controls\n\n%s\n\n(q) Back", controls);
 	clrtobot();
 

@@ -162,7 +162,7 @@ void game_run(const struct game_params *params)
 			addstr("(i) Advance one tick");
 		} else {
 			/* Tell the player how to get help. */
-			addstr("(H) Help");
+			addstr("(?) Help");
 		}
 		clrtoeol();
 
@@ -206,7 +206,7 @@ void game_run(const struct game_params *params)
 			do_tick = 1;
 			break;
 
-		case 'H':
+		case '?':
 			help_run();
 			erase();
 			break;

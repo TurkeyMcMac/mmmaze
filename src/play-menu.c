@@ -108,7 +108,7 @@ void play_menu_run(void)
 			seed_input == GAME_SEED_MIN ? " (random)" : "");
 		addstr(
 			"\n(p) Play\n"
-			"(H) Help\n"
+			"(?) Help\n"
 			"(q) Cancel");
 		clrtobot();
 
@@ -155,7 +155,7 @@ void play_menu_run(void)
 			}
 			game_run(&params);
 			break;
-		case 'H':
+		case '?':
 			help_parameters_run();
 			break;
 		CASES_QUIT

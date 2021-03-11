@@ -1,2 +1,2 @@
 /* The version of the program: */
-#define VERSION "0.5.8"
+#define VERSION "0.5.9"

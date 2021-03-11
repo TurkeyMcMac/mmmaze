@@ -10,7 +10,7 @@ static void run_main_menu(void)
 		mvaddstr(0, 0,
 			"Monster Money Maze\n\n"
 			"(p) Play\n"
-			"(H) Help\n"
+			"(?) Help\n"
 			"(q) Quit");
 		clrtobot();
 
@@ -18,7 +18,7 @@ static void run_main_menu(void)
 		case 'p':
 			play_menu_run();
 			break;
-		case 'H':
+		case '?':
 			help_run();
 			break;
 		CASES_QUIT
