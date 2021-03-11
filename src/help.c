@@ -43,7 +43,8 @@ static void wait_for_quit(void)
 
 void help_overview_run(void)
 {
-	static const char overview[] =
+	mvaddstr(0, 0,
+		"Overview\n\n"
 		"The objective of the game is simple: Get cash and get out\n"
 		"without getting got. You start at the top left and need\n"
 		"to get to the end at the bottom right (marked with an E.)\n"
@@ -51,8 +52,8 @@ void help_overview_run(void)
 		"from the Ms, which are randomly-wandering monsters. The\n"
 		"cash and monsters will spawn over time. The goal is to\n"
 		"leave with as much money as possible, but the longer you\n"
-		"stay, the more monsters appear, so be careful!";
-	mvprintw(0, 0, "Overview\n\n%s\n\n(q) Back", overview);
+		"stay, the more monsters appear, so be careful!\n"
+		"\n(q) Back");
 	clrtobot();
 
 	wait_for_quit();
@@ -60,12 +61,13 @@ void help_overview_run(void)
 
 void help_controls_run(void)
 {
-	static const char controls[] =
+	mvaddstr(0, 0,
+		"Controls\n\n"
 		"You can move with the arrow keys, WASD, or HJKL. Pressing\n"
 		"I makes you idle for one game tick. Time only passes when\n"
 		"you move or idle. You can quit an ongoing game with Q.\n"
-		"Enter ? to bring up this help in-game. That's about it.";
-	mvprintw(0, 0, "Controls\n\n%s\n\n(q) Back", controls);
+		"Enter ? to bring up this help in-game. That's about it.\n"
+		"\n(q) Back");
 	clrtobot();
 
 	wait_for_quit();
@@ -73,7 +75,8 @@ void help_controls_run(void)
 
 void help_parameters_run(void)
 {
-	static const char parameters[] =
+	mvaddstr(0, 0,
+		"Parameters\n\n"
 		"Several parameters are available to tune gameplay:\n"
 		"- The width and height specify the size of the maze in\n"
 		"  (potential) path intersections, or \"nodes.\"\n"
@@ -84,8 +87,8 @@ void help_parameters_run(void)
 		"- The maximum placed cash is the limit on the cash amount\n"
 		"  placed at any one time.\n"
 		"- The monster placement interval is self-explanatory.\n"
-		"- The seed is used for random generation.";
-	mvprintw(0, 0, "Parameters\n\n%s\n\n(q) Back", parameters);
+		"- The seed is used for random generation.\n"
+		"\n(q) Back");
 	clrtobot();
 
 	wait_for_quit();
