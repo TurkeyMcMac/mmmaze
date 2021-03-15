@@ -10,7 +10,8 @@
  * and consequently the bottom right tile will be a node just as the top left
  * will be. Going from the top left to the bottom right, following the path
  * directions specified by the tile bits will never lead one to out-of-bounds
- * coordinates, and all nodes will be reachable along the way. */
+ * coordinates, and all nodes will be reachable along the way. All tiles part of
+ * the path are marked with BIT_PATH. */
 struct maze {
 	int width, height;
 	TILE_TYPE *tiles;

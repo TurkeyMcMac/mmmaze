@@ -109,7 +109,7 @@ static void remove_intermediate_bits(struct maze *maze)
 	int x, y;
 	for (y = 0; y < maze->height; y += 2) {
 		for (x = 0; x < maze->width; x += 2) {
-			MAZE_GET(maze, x, y) &= ~(BIT_ADDED | BIT_PATH);
+			MAZE_GET(maze, x, y) &= ~BIT_ADDED;
 		}
 	}
 }
@@ -123,9 +123,11 @@ static void connect_paths(struct maze *maze)
 		for (x = 0; x < maze->width; x += 2) {
 			TILE_TYPE t = MAZE_GET(maze, x, y);
 			if (t & BIT_RIGHT)
-				MAZE_GET(maze, x + 1, y) = BIT_LEFT | BIT_RIGHT;
+				MAZE_GET(maze, x + 1, y) =
+					BIT_PATH | BIT_LEFT | BIT_RIGHT;
 			if (t & BIT_DOWN)
-				MAZE_GET(maze, x, y + 1) = BIT_UP | BIT_DOWN;
+				MAZE_GET(maze, x, y + 1) =
+					BIT_PATH | BIT_UP | BIT_DOWN;
 		}
 	}
 }
