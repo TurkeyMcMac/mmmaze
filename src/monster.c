@@ -2,7 +2,7 @@
 #include "move.h"
 #include <stddef.h>
 
-void monster_init(struct monster *monster, int x, int y, struct maze *maze)
+void mnst_init(struct monster *monster, int x, int y, struct maze *maze)
 {
 	monster->x = x;
 	monster->y = y;
@@ -14,7 +14,7 @@ void monster_init(struct monster *monster, int x, int y, struct maze *maze)
 	MAZE_GET(maze, x, y) |= BIT_MONSTER;
 }
 
-void monster_start_move_random(struct monster *monster, const struct maze *maze,
+void mnst_start_move_random(struct monster *monster, const struct maze *maze,
 	RAND_TYPE *rand)
 {
 	/* The available directions, excluding whence the monster came: */
@@ -38,7 +38,7 @@ void monster_start_move_random(struct monster *monster, const struct maze *maze,
 	}
 }
 
-void monster_make_move(struct monster *monster, struct maze *maze)
+void mnst_make_move(struct monster *monster, struct maze *maze)
 {
 	/* Unmark the maze. */
 	MAZE_GET(maze, monster->x, monster->y) &= ~BIT_MONSTER;

@@ -27,7 +27,7 @@ static int add_head(struct maze *maze, int x, int y, struct heads *heads)
 	return 0;
 }
 
-int player_mark_seen(struct maze *maze, int x, int y, int dist)
+int plyr_mark_seen(struct maze *maze, int x, int y, int dist)
 {
 	int ret = -1;
 	struct heads heads = { NULL, 0, 0 };
@@ -64,7 +64,7 @@ error:
 	return ret;
 }
 
-int player_unmark_seen(struct maze *maze, int x, int y, int dist)
+int plyr_unmark_seen(struct maze *maze, int x, int y, int dist)
 {
 	/* A few extra tiles are cleared. */
 	int start_x = x - dist, start_y = y - dist;

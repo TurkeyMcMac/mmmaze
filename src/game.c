@@ -92,7 +92,7 @@ void game_run(const struct game_params *params)
 	end_y = maze.height - 1;
 
 	/* Mark what's visible for the first draw: */
-	player_mark_seen(&maze, player_x, player_y, params->view_dist);
+	plyr_mark_seen(&maze, player_x, player_y, params->view_dist);
 
 	for (;;) {
 		/* Whether to simulate one tick this iteration: */
@@ -170,7 +170,7 @@ void game_run(const struct game_params *params)
 		switch (getch()) {
 		CASES_RIGHT
 			if (player_avail & BIT_RIGHT) {
-				player_unmark_seen(&maze, player_x, player_y,
+				plyr_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
 				++player_x;
 				do_tick = 1;
@@ -178,7 +178,7 @@ void game_run(const struct game_params *params)
 			break;
 		CASES_UP
 			if (player_avail & BIT_UP) {
-				player_unmark_seen(&maze, player_x, player_y,
+				plyr_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
 				--player_y;
 				do_tick = 1;
@@ -186,7 +186,7 @@ void game_run(const struct game_params *params)
 			break;
 		CASES_LEFT
 			if (player_avail & BIT_LEFT) {
-				player_unmark_seen(&maze, player_x, player_y,
+				plyr_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
 				--player_x;
 				do_tick = 1;
@@ -194,7 +194,7 @@ void game_run(const struct game_params *params)
 			break;
 		CASES_DOWN
 			if (player_avail & BIT_DOWN) {
-				player_unmark_seen(&maze, player_x, player_y,
+				plyr_unmark_seen(&maze, player_x, player_y,
 					params->view_dist);
 				++player_y;
 				do_tick = 1;
@@ -252,12 +252,12 @@ void game_run(const struct game_params *params)
 			}
 
 			/* Mark the new seen area. */
-			player_mark_seen(&maze, player_x, player_y,
+			plyr_mark_seen(&maze, player_x, player_y,
 				params->view_dist);
 
 			/* Calculate monster movement. */
 			for (i = 0; i < n_monsters; ++i) {
-				monster_start_move_random(&monsters[i], &maze,
+				mnst_start_move_random(&monsters[i], &maze,
 					&rand);
 			}
 
@@ -272,7 +272,7 @@ void game_run(const struct game_params *params)
 				if (m && find_without_flags(&maze, &x, &y,
 						BIT_MONSTER | BIT_PLAYER_SEEN,
 						&rand) >= 0)
-					monster_init(m, x, y, &maze);
+					mnst_init(m, x, y, &maze);
 			}
 
 			/* Possibly place $1. */
@@ -289,7 +289,7 @@ void game_run(const struct game_params *params)
 
 			/* Carry out monster movement. */
 			for (i = 0; i < n_monsters; ++i) {
-				monster_make_move(&monsters[i], &maze);
+				mnst_make_move(&monsters[i], &maze);
 			}
 		}
 	}

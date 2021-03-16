@@ -10,9 +10,9 @@ struct maze;
  * allocation fails internally, in which case -1 is returned and the marking is
  * incomplete. Sight cannot pass through tiles with BIT_PLAYER_SEEN on, for the
  * sake of the efficiency of the algorithm. */
-int player_mark_seen(struct maze *maze, int x, int y, int dist);
+int plyr_mark_seen(struct maze *maze, int x, int y, int dist);
 
 /* Does pretty much the same as above, but removes BIT_PLAYER_SEEN instead. */
-int player_unmark_seen(struct maze *maze, int x, int y, int dist);
+int plyr_unmark_seen(struct maze *maze, int x, int y, int dist);
 
 #endif /* PLAYER_H_ */
