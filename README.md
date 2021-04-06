@@ -12,7 +12,8 @@ More information is available through the in-game menus.
 
 The code can be compiled with a C89 compiler and a Curses library. The code
 works on Windows using PDCurses. To run the program, you should probably have a
-terminal with dimensions of at least 80x23.
+terminal with dimensions of at least 80x23 that distinguishes uppercase and
+lowercase letters.
 
 ## Building/Installation
 
