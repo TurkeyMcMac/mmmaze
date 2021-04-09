@@ -146,6 +146,8 @@ int maze_generate(struct maze *maze, int width_nodes, int height_nodes,
 	/* Convert the dimensions in nodes to dimensions in tiles. */
 	maze->width = width_nodes * 2 - 1;
 	maze->height = height_nodes * 2 - 1;
+	/* Check that size_t can fit the number of tiles then try allocating. */
+	if ((size_t)-1 < 32767U) goto error_maze_alloc;
 	maze->tiles = calloc((size_t)(maze->width * maze->height),
 		sizeof(*maze->tiles));
 	if (!maze->tiles) goto error_maze_alloc;
