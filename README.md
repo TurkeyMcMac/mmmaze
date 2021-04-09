@@ -34,7 +34,7 @@ It runs on the Windows Console specifically. My procedure to build it using
 MingW and PDCurses is as follows:
 
     make -C ../PDCurses/wincon -j CC=x86_64-w64-mingw32-gcc CFLAGS='-I.. -Os -flto' pdcurses.a &&
-    make exe=mmmaze.exe CC=x86_64-w64-mingw32-gcc CPPFLAGS='-I../PDCurses' CFLAGS='-std=c89 -pedantic -Wall -Wextra -Os -flto' LDFLAGS='-Wl,--gc-sections,--strip-all' LDLIBS='../PDCurses/wincon/pdcurses.a'
+    make exe=mmmaze.exe CC=x86_64-w64-mingw32-gcc CPPFLAGS='-I../PDCurses' CFLAGS='-std=c89 -pedantic -Wall -Wextra -Os -flto' LDFLAGS='-Wl,--gc-sections,--strip-all,--no-insert-timestamp' LDLIBS='../PDCurses/wincon/pdcurses.a'
 
 (I keep the PDCurses root directory next to this project's root directory on my
 computer, which is why the above references `../PDCurses`.)
