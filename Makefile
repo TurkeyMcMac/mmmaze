@@ -1,5 +1,6 @@
 exe = mmmaze
-CFLAGS = -std=c89 -pedantic -Wall -Wextra -D_XOPEN_SOURCE
+CPPFLAGS = -D_XOPEN_SOURCE
+CFLAGS = -std=c89 -pedantic -Wall -Wextra
 LDLIBS = -lcurses
 
 CC ?= cc
@@ -9,7 +10,7 @@ RM ?= rm -f
 all: $(exe)
 
 $(exe): src/*
-	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) src/*.c $(LDLIBS)
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) src/*.c $(LDLIBS)
 
 .PHONY: clean
 clean:
