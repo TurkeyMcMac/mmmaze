@@ -10,7 +10,7 @@
 /* The list of heads: places that will be later incorporated into the maze. */
 struct heads {
 	struct head {
-		short x, y;
+		unsigned char x, y;
 	} *arr;
 	size_t len, cap;
 };

@@ -7,7 +7,7 @@
 /* The list of player sight reveal heads. */
 struct heads {
 	struct head {
-		short x, y;
+		unsigned char x, y;
 	} *arr;
 	size_t len, cap;
 };

@@ -18,7 +18,8 @@ struct maze {
 };
 
 /* The maximum width and height in nodes, chosen so that width * height (of type
- * int) can never overflow. */
+ * int) can never overflow, and so that x and y coordinates can each fit inside
+ * one byte. */
 #define MAZE_WIDTH_NODES_MAX 90
 #define MAZE_HEIGHT_NODES_MAX 90
 
