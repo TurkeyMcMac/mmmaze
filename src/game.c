@@ -266,13 +266,15 @@ void game_run(const struct game_params *params)
 
 			/* Possibly place a monster. */
 			if (ticks % params->monster_interval == 0) {
-				struct monster *m = GROW(monsters, n_monsters,
-					monsters_cap);
 				int x, y;
-				if (m && find_without_flags(&maze, &x, &y,
+				if (find_without_flags(&maze, &x, &y,
 						BIT_MONSTER | BIT_PLAYER_SEEN,
 						&rand) >= 0)
-					mnst_init(m, x, y, &maze);
+				{
+					struct monster *m = GROW(monsters,
+						n_monsters, monsters_cap);
+					if (m) mnst_init(m, x, y, &maze);
+				}
 			}
 
 			/* Possibly place $1. */
