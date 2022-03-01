@@ -22,7 +22,7 @@ static int coords_are_ok(const struct maze *maze, int x, int y)
 }
 
 /* Adds a head and marks its place as added, if the place isn't added yet. */
-static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
+static int add_head(struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (coords_are_ok(maze, x, y)) {
 		TILE_TYPE *t = &MAZE_GET(maze, x, y);
@@ -39,7 +39,7 @@ static int add_head(const struct maze *maze, int x, int y, struct heads *heads)
 }
 
 /* Adds up to four heads around the given place. */
-static int add_heads(const struct maze *maze, int x, int y, struct heads *heads)
+static int add_heads(struct maze *maze, int x, int y, struct heads *heads)
 {
 	if (add_head(maze, x + 2, y, heads)
 	 || add_head(maze, x, y - 2, heads)
