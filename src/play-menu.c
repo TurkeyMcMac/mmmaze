@@ -2,6 +2,7 @@
 #include "common-keys.h"
 #include "game.h"
 #include "help.h"
+#include "rand.h"
 #include <curses.h>
 #include <time.h>
 
@@ -149,7 +150,8 @@ void play_menu_run(void)
 				params.seed = seed_input;
 			} else {
 				/* Generate a seed in the range (min, max]. */
-				params.seed = (unsigned long)time(NULL)
+				RAND_TYPE rand = time(NULL);
+				params.seed = rand_gen(&rand)
 					% (GAME_SEED_MAX - GAME_SEED_MIN)
 					+ GAME_SEED_MIN + 1;
 			}
